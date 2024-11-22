@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Incube - Students</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<style>
+		.password-field {
+			padding-right: 0rem;
+			/* Adjust the right padding to make space for the icon */
+		}
+
+		.password-field+button {
+			right: 2rem;
+			/* Adjust the right position of the button */
+		}
+
+		#filterdropdown {
+			margin-right: -63%;
+		}
+
+		.dropdown {
+			position: relative;
+			display: inline-block;
+			margin-right: 1rem;
+		}
+
+		.dropdown select {
+			appearance: none;
+			width: 100%;
+			background-color: #fff;
+			border: 1px solid #d2d6dc;
+			border-radius: 0.25rem;
+			padding: 0.5rem 2rem 0.5rem 1rem;
+			font-size: 0.875rem;
+			line-height: 1.25rem;
+			outline: none;
+			box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+			transition: border-color 0.2s ease-in-out;
+		}
+
+		.dropdown select:hover {
+			border-color: #a0aec0;
+		}
+
+		.dropdown select:focus {
+			border-color: #718096;
+			box-shadow: 0 0 0 3px rgba(113, 128, 150, 0.5);
+		}
+
+		.dropdown .arrow {
+			position: absolute;
+			top: 50%;
+			right: 0.5rem;
+			transform: translateY(-50%);
+			pointer-events: none;
+			color: #718096;
+		}
+	</style>
+</head>
+
+<body class="bg-gray-100">
+	<!-- Header -->
+	<nav class="bg-white shadow-md">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex justify-between h-16">
+				<div class="flex">
+					<div class="flex-shrink-0 flex items-center">
+						<div class="logo">
+							<img class="h-8 w-auto" src="https://www.myincube.com/assets/images/incube-logo.png"
+								alt="Incube Logo">
+						</div>
+					</div>
+					<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+						<a th:href="@{/dashboard}"
+							class="inline-flex items-center px-1 pt-1 border-b-2 border-indigo-500 text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out">Dashboard</a>
+						<a th:href="@{/dashboard}"
+							class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">Courses</a>
+						<a th:href="@{/instructors}"
+							class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">Instructors</a>
+						<a th:href="@{/students}"
+							class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">Students</a>
+					</div>
+				</div>
+				<div class="hidden sm:ml-6 sm:flex sm:items-center">
+					<div class="ml-3 relative">
+						<div>
+							<button
+								class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out"
+								id="user-menu" aria-label="User menu" aria-haspopup="true">
+								<img class="h-8 w-8 rounded-full"
+									src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+									alt="User Avatar">
+							</button>
+						</div>
+						<!-- Display the sessioned username -->
+						Welcome <b><span th:text="${sessionedUserName}" class="ml-2"
+								style="color: rgb(255, 128, 255);"></span></b>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+
+	<!-- Main Content -->
+	<div class="py-6">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+			<h1 class="text-2xl font-semibold text-gray-900">Students</h1>
+		</div>
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+			<div class="py-4">
+
+				<!-- Students Details List -->
+				<div class="bg-white overflow-hidden shadow rounded-lg">
+					<div class="px-4 py-5 sm:p-6">
+						<div class="flex justify-between items-center">
+							<h3 class="text-lg leading-6 font-medium text-gray-900">Students Details</h3>
+
+							<!--<div class="dropdown">
+								<select name="userGradeFilter" onchange="handleFilterOfStudents(this.value)">
+									<option value="">Filter by:</option>
+									<option value="1">Admins</option>
+									<option value="2" selected>Students</option>
+									<option value="3">Instructors</option>
+								</select>
+								<div class="arrow">
+									<svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 20 20">
+										<path
+											d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+									</svg>
+								</div>
+							</div>-->
+
+							<!--Filter Options Drop-Down-->
+							<form th:action="@{/grid(selectedFilter=${selectedFilter})}" method="get" id="dropdownForm">
+								<!--Filter: <select id="selectedFilterOp" name="selectedFilterOp"
+									onchange="submitFunction()">
+									<option value="">All</option>
+									<option value="2">Student</option>
+									<option value="1">Admin</option>
+									<option value="3">Instructor</option>
+								</select>-->
+
+								<div class="flex items-center">
+								  <p class="mr-2">Filter By:</p>
+								  <div class="w-1/3 md:w-1/4 lg:w-1/5">
+								    <select id="selectedFilterOp" name="selectedFilterOp" onchange="submitFunction()"
+								       class="block w-full px-3 py-2 text-base font-normal text-zinc-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-zinc-300 rounded transition ease-in-out m-0 focus:text-zinc-700 focus:bg-white focus:border-blue-600 focus:outline-none">
+								      <option value="">All</option>
+								      <option value="2">Student</option>
+								      <option value="1">Admin</option>
+								      <option value="3">Instructor</option>
+								    </select>
+								  </div>
+								</div>
+
+
+								<!--<button type="submit" style="background-color: aqua;">Filter</button>-->
+							</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+							<button
+								class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700"
+								id="addCourseButton" onclick="showModal()">
+								<i class="fas fa-plus mr-2"></i>
+								Add Student
+							</button>
+						</div>
+						<div class="mt-6">
+
+							<table class="min-w-full divide-y divide-gray-200">
+								<thead>
+									<tr>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Student ID
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Name
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Email Address
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Phone Number
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Whatsapp Number
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											User Name
+										</th>
+										<th scope="col"
+											class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											Password
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:if="${#lists.isEmpty(studentsList)}">
+										<td colspan="7" class="px-6 py-4 whitespace-nowrap text-center"><b>No records
+												found</b></td>
+									</tr>
+									<tr th:unless="${#lists.isEmpty(studentsList)}" th:each="student:${studentsList}">
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm text-gray-500" th:text="${student.id}">Student ID</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm font-medium text-gray-900" th:text="${student.name}">
+												Name</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm text-gray-500" th:text="${student.email}">Email Address
+											</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm text-gray-500" th:text="${student.mobileNum}">Phone
+												Number</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm text-gray-500" th:text="${student.whatsAppNum}">Whatsapp
+												Number</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="text-sm text-gray-500" th:text="${student.userName}">User Name
+											</div>
+										</td>
+										<td class="px-6 py-4 whitespace-nowrap">
+											<div class="relative">
+												<input type="password" class="text-sm text-gray-500 password-field pr-8"
+													th:value="${student.password}" readonly>
+												<button
+													class="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+													onclick="togglePasswordVisibility(this)">
+													<svg class="h-5 w-5 eye-icon" fill="none" viewBox="0 0 24 24"
+														stroke="currentColor">
+														<path stroke-linecap="round" stroke-linejoin="round"
+															stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+														<path stroke-linecap="round" stroke-linejoin="round"
+															stroke-width="2"
+															d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+													</svg>
+												</button>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Student Modal (if needed) -->
+	<!-- (Space for Adding Add Student Modal code here) -->
+
+	<!-- Update Student Details Modal (if needed) -->
+	<!-- (Space for Adding Update Student Details Modal code here) -->
+
+	<script th:src="@{/js/students.js}"></script>
+	<!-- Footer -->
+	<!-- (Existing footer code) -->
+</body>
+
+</html>
